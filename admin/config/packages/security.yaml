@@ -1,0 +1,25 @@
+# config/packages/security.yaml
+security:
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: username
+    password_hashers:
+        App\Entity\User:
+            algorithm: 'argon2id'
+            # Firewall configuration
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        main:
+            lazy: true
+            provider: app_user_provider
+            form_login:
+                login_path: login
+                check_path: login
+            logout:
+                path: logout
+                target: /

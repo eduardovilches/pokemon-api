@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block body %}
+
+    <div class="container my-5">
+        <h1 class="text-primary">{{ title }}</h1>
+        <p>This content is loaded from the index view template!</p>
+
+        <a href="#" class="btn btn-secondary">
+            Go to another page
+        </a>
+    </div>
+{% endblock %}
