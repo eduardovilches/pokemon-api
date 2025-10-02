@@ -2,16 +2,42 @@
 
 namespace App\Strategy\Register;
 
+use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\User;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+
 /**
- * Interface RegisterUserInterface
- * Class Strategy used for new Register Role Professor
+ * Strategy used for new Register Role Professor
  */
 class RegisterUserProfessor implements RegisterUserInterface
 {
-    public function register(User $user): void
+    public function __construct(
+        private readonly EntityManagerInterface $entityManager,
+        private readonly  ValidatorInterface $validator,
+        private readonly UserPasswordHasherInterface $passwordHasher
+    ){}
+    
+
+    public function register(User $entity): void
     {
-        var_dump("entro");
-        //$user->setRoles(['ROLE_PROFESSOR']);
+        
+        $errors = $this->validator->validate($entity);
+
+        if (count($errors) > 0) {
+            throw new \InvalidArgumentException((string) $errors, 400);
+        }
+
+        $hashedPassword = $this->passwordHasher->hashPassword(
+            $entity,
+            $entity->getPassword()
+        );
+        
+        $entity->setPassword($hashedPassword);
+
+        var_dump($entity);
+
+        //$this->entityManager->persist($entity);
+        //$this->entityManager->flush();
     }
 }

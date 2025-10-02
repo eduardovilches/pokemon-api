@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Strategy\Register;
 
 use App\Entity\User;

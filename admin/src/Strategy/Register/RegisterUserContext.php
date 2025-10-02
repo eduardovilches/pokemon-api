@@ -1,31 +1,51 @@
 <?php
 namespace App\Strategy\Register;
 
+use Psr\Container\ContainerInterface;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
+use App\Strategy\Register\RegisterUserProfessor;
+use App\Strategy\Register\RegisterUserTrainer;
+
 /**
  * Class Context for switch Strategy
  */
-class RegisterUserContext
+class RegisterUserContext implements ServiceSubscriberInterface
 {
-    private $strategy =  NULL;
+    private ContainerInterface $locator;
 
-    public function __construct($strategy_choose) {
+    private const STRATEGY_MAP = [
+        'PROFESSOR' => RegisterUserProfessor::class,
+        'TRAINER' => RegisterUserTrainer::class,
+        // Add other roles here as you create their services
+    ];
 
-        switch($strategy_choose){
-            case "PROFESSOR":
-                $this->strategy =  new RegisterUserProfessor();
-                break;
-            case "TRAINER":
-                $this->strategy =  new RegisterUserTrainer();
-                break;
-            
-            default: 
-                throw new \Exception("No existe la estrategia de registro");
-        }
-
+    public function __construct(ContainerInterface $locator)
+    {
+        // Inject the Service Locator.
+        $this->locator = $locator;
     }
 
-    public function strategy($user)
+    public static function getSubscribedServices(): array
     {
-        return $this->strategy->register($user);
+        // List the strategy service classes that the context might need.
+        return [
+            RegisterUserProfessor::class,
+            RegisterUserTrainer::class,
+        ];
+    }
+
+    public function strategy($strategyChoose, $user)
+    {
+        $strategyKey = strtoupper($strategyChoose);
+
+        if (!isset(self::STRATEGY_MAP[$strategyKey])) {
+            throw new \InvalidArgumentException("No existe la estrategia de registro para el tipo: " . $strategyKey);
+        }
+
+        $strategyServiceId = self::STRATEGY_MAP[$strategyKey];
+        $strategy = $this->locator->get($strategyServiceId);
+
+
+        $strategy->register($user);
     }
 }

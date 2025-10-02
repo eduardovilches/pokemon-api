@@ -10,7 +10,6 @@ class UserDirectorBuilder
 {
     public function build($data, $type): User
     {
-        var_dump($data);exit();
         $builder = NULL;
         switch (strtoupper($type)) {
             case 'PROFESSOR':
