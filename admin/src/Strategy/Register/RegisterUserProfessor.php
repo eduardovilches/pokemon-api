@@ -35,9 +35,8 @@ class RegisterUserProfessor implements RegisterUserInterface
         
         $entity->setPassword($hashedPassword);
 
-        var_dump($entity);
 
-        //$this->entityManager->persist($entity);
-        //$this->entityManager->flush();
+        $this->entityManager->persist($entity);
+        $this->entityManager->flush();
     }
 }

@@ -29,9 +29,17 @@ class PopulateDatabaseCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         try {
-            $professor = $this->makeUserProfessor();
 
-            $this->registrationContext->strategy('PROFESSOR', $professor);
+            //Create Users
+            $professor = $this->makeUserProfessor();
+            //$this->registrationContext->strategy('PROFESSOR', $professor);
+
+            $trainerOne =  $this->makeUserTrainer();
+            //$this->registrationContext->strategy('TRAINER', $trainerOne);
+
+            $trainerTwo =  $this->makeUserTrainer();
+            //$this->registrationContext->strategy('TRAINER', $trainerTwo);
+
         } catch(\Exception $e){
             throw new \Exception($e->getMessage());
         }
@@ -45,6 +53,20 @@ class PopulateDatabaseCommand extends Command
             "username" => "professor_user",
             "password" => "1234",
             "roles" => ['ROLE_PROFESSOR']
+        ];
+
+        $userDirectorBuilder = new \App\Builders\UserDirectorBuilder();
+        $user = $userDirectorBuilder->build($data, 'PROFESSOR');
+
+        return $user;
+    }
+
+    private function makeUserTrainer()
+    {
+        $data = [
+            "username" => "trainer_".rand(100, 9999),
+            "password" => "12345",
+            "roles" => ['ROLE_TRAINER']
         ];
 
         $userDirectorBuilder = new \App\Builders\UserDirectorBuilder();
