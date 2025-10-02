@@ -25,4 +25,26 @@ class Move
     {
         return $this->id;
     }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    public function getType(): ?\App\Entity\Type
+    {
+        return $this->type;
+    }
+
+    public function setType(?\App\Entity\Type $type): self
+    {
+        $this->type = $type;
+        return $this;
+    }
 }

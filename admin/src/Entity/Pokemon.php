@@ -45,4 +45,58 @@ class Pokemon
     {
         return $this->id;
     }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    public function setNickname(?string $nickname): self
+    {
+        $this->nickname = $nickname;
+        return $this;
+    }
+
+    public function setLevel(int $level): self
+    {
+        $this->level = $level;
+        return $this;
+    }
+
+    public function setHealthPoints(int $healthPoints): self
+    {
+        $this->health_points = $healthPoints;
+        return $this;
+    }
+
+    public function setAttack(int $attack): self
+    {
+        $this->attack = $attack;
+        return $this;
+    }
+
+    public function setDefense(int $defense): self
+    {
+        $this->defense = $defense;
+        return $this;
+    }
+
+    public function setSpeed(int $speed): self
+    {
+        $this->speed = $speed;
+        return $this;
+    }
+
+    public function setCatchRate(int $catchRate): self
+    {
+        $this->catch_rate = $catchRate;
+        return $this;
+    }
+
+    public function setTrainer(?\App\Entity\User $trainer): self
+    {
+        $this->trainer = $trainer;
+        return $this;
+    }
 }

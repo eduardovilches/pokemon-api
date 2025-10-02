@@ -20,4 +20,10 @@ class Type
     {
         return $this->id;
     }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+        return $this;
+    }
 }
