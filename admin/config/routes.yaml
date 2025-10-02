@@ -1,3 +1,8 @@
-app_homepage:
-    path: /
-    controller: App\Controller\AdminController::index
+# config/routes.yaml
+api_login_check:
+    path: /api/login_check
+    methods: [POST]
+controllers:
+   resource: ../src/Controller/
+   type: attribute
+   prefix: /api

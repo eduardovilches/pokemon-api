@@ -1,25 +1,36 @@
-# config/packages/security.yaml
 security:
+    # --- Providers and Hashers remain unchanged ---
     providers:
         app_user_provider:
             entity:
                 class: App\Entity\User
-                property: username
+                property: username # Or 'email', depending on your entity
+
     password_hashers:
         App\Entity\User: 'auto'
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
             algorithm: 'argon2id'
-    firewalls:
-        dev:
-            pattern: ^/(_(profiler|wdt)|css|images|js)/
-            security: false
 
-        main:
-            lazy: true
+    firewalls:
+        login:
+            # 1. AUTHENTICATOR FOR LOGIN (Credential check)
+            pattern: ^/api/login_check
+            stateless: true
+            json_login:
+                check_path: /api/login_check
+                username_path: username
+                password_path: password
+                # NOTE: Lexik success/failure handlers removed.
+                # Token generation must now happen in a custom event listener 
+                # or a dedicated response handler.
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+        # The 'api' firewall now handles all security logic for /api
+        api:
+            pattern: ^/api
+            stateless: true
+            jwt: ~                          # This enables the Lexik JWT validator/authenticator
             provider: app_user_provider
-            form_login:
-                login_path: login
-                check_path: login
-            logout:
-                path: logout
-                target: /
+    access_control:
+        - { path: ^/api/login_check, roles: PUBLIC_ACCESS }
+        - { path: ^/api,       roles: IS_AUTHENTICATED_FULLY }
