@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\PokemonRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
 
 #[ORM\Entity(repositoryClass: PokemonRepository::class)]
 class Pokemon
@@ -37,9 +38,35 @@ class Pokemon
     #[ORM\Column]
     private ?int $catch_rate = null;
 
-    #[ORM\ManyToOne(targetEntity: \App\Entity\User::class)]
+    #[ORM\ManyToOne(inversedBy: 'pokemonCollection')] 
     #[ORM\JoinColumn(name: "trainer_id", referencedColumnName: "id", nullable: true)]
     private ?\App\Entity\User $trainer = null;
+    
+    /**
+     * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\Type>
+     *
+     * @ORM\ManyToMany(targetEntity="App\Entity\Type", inversedBy="pokemons")
+     * @ORM\JoinTable(name="pokemon_type")
+     */
+    private $types;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection<int, \App\Entity\Move>
+     *
+     * @ORM\ManyToMany(targetEntity="App\Entity\Move", inversedBy="pokemon")
+     * @ORM\JoinTable(name="pokemon_move",
+     *      joinColumns={@ORM\JoinColumn(name="pokemon_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="move_id", referencedColumnName="id")}
+     * )
+     */
+    private $moves;
+
+    public function __construct()
+    {
+        $this->types = new ArrayCollection();
+        $this->moves =  new ArrayCollection();
+    }
+
 
     public function getId(): ?int
     {
@@ -94,9 +121,56 @@ class Pokemon
         return $this;
     }
 
+    public function getTrainer(): ?\App\Entity\User
+    {
+        return $this->trainer;
+    }
+
     public function setTrainer(?\App\Entity\User $trainer): self
     {
         $this->trainer = $trainer;
+        return $this;
+    }
+
+    public function getTypes()
+    {
+        return $this->types;
+    }
+
+    public function addType(\App\Entity\Type $type): static
+    {
+        if (!$this->types->contains($type)) {
+            $this->types->add($type);
+        }
+
+        return $this;
+    }
+
+    public function removeType(\App\Entity\Type $type): static
+    {
+        $this->types->removeElement($type);
+        return $this;
+    }
+
+       /**
+     * @return \Doctrine\Common\Collections\Collection<int, \App\Entity\Move>
+     */
+    public function getMoves()
+    {
+        return $this->moves;
+    }
+
+    public function addMove(\App\Entity\Move $move): self
+    {
+        if (!$this->moves->contains($move)) {
+            $this->moves[] = $move;
+        }
+        return $this;
+    }
+
+    public function removeMove(\App\Entity\Move $move): self
+    {
+        $this->moves->removeElement($move);
         return $this;
     }
 }

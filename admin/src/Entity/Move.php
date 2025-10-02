@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Repository\MoveRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 
 #[ORM\Entity(repositoryClass: MoveRepository::class)]
 class Move
@@ -20,6 +22,13 @@ class Move
     #[ORM\JoinColumn(name: "type_id", referencedColumnName: "id", nullable: true)]
     private ?\App\Entity\Type $type = null;
 
+    #[ORM\ManyToMany(targetEntity: Pokemon::class, mappedBy: 'moves')]
+    private Collection $pokemon;
+
+    public function __construct()
+    {
+        $this->pokemon = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -46,5 +55,13 @@ class Move
     {
         $this->type = $type;
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Pokemon>
+     */
+    public function getPokemon(): Collection
+    {
+        return $this->pokemon;
     }
 }

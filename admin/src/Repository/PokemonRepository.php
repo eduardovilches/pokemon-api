@@ -27,4 +27,13 @@ class PokemonRepository extends ServiceEntityRepository
         ->getQuery()
         ->getArrayResult();
     }
+
+    public function findPokemonsPerUser($user)
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.trainer = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getArrayResult();
+    }
 }

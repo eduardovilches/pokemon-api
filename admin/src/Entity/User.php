@@ -71,6 +71,11 @@ class User implements UserInterface,  \Symfony\Component\Security\Core\User\Pass
         return array_unique($roles);
     }
 
+    public function getPokemonCollection(): Collection
+    {
+        return $this->pokemonCollection;
+    }
+
     public function addPokemon(Pokemon $pokemon): static
     {
         if (!$this->pokemonCollection->contains($pokemon)) {
