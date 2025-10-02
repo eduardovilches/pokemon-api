@@ -4,6 +4,9 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 
@@ -23,6 +26,13 @@ class User implements UserInterface,  \Symfony\Component\Security\Core\User\Pass
     #[ORM\Column(type: 'json')]
     private array $roles = []; 
 
+    #[ORM\OneToMany(mappedBy: 'trainer', targetEntity: Pokemon::class)]
+    private Collection $pokemonCollection; 
+
+    public function __construct()
+    {
+        $this->pokemonCollection = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -59,6 +69,16 @@ class User implements UserInterface,  \Symfony\Component\Security\Core\User\Pass
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
+    }
+
+    public function addPokemon(Pokemon $pokemon): static
+    {
+        if (!$this->pokemonCollection->contains($pokemon)) {
+            $this->pokemonCollection->add($pokemon);
+            $pokemon->setTrainer($this);
+        }
+
+        return $this;
     }
 
     public function getUserIdentifier(): string
